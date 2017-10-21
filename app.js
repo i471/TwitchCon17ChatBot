@@ -1,3 +1,5 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 var tmi = require('tmi.js');
 var stinv = require('steam-user-inventory');
 var axios = require('axios');
@@ -23,19 +25,30 @@ var client = new tmi.client(options);
 client.connect();
 
 client.on("chat", (channel, user, message, self) => {
-	if(message = "!raffle"){
-		console.log(message);
-		stinv('xSerendipity').then((data)=>{
-			console.log(data[1].name);
-			client.say("#xSerendipity", data[1].name);
-			var img=data[1].image;
-			axios.get('https://localhost:8080/change-image?itemImage='+img)
+	if(message.startsWith("!raffle")){
+		// if(user.mod){
+			var array = message.split(',');
+			var itemNumber= parseInt(array[1]);
+			var delay = parseInt(array[2]);
+			console.log(message);
+			stinv('xSerendipity').then((data)=>{
+				console.log(data[itemNumber].name);
+				client.say("#xSerendipity", data[itemNumber].name);
+				axios({
+					method: 'get',
+					url: 'https://localhost:8080/post-roll?' + 'itemName=' + data[itemNumber].name + '&itemImage=' +data[itemNumber].image 
+						+ '&streamerId=majiaan&delay=' + delay
+				}).then(function (response) {
+					console.log(response);
+				}).catch(function (error){
+					console.log(error);
+				});
 
-		}).catch(function(error) {
-			console.log(error)
-		 })
+			}).catch(function(error) {
+				console.log(error)
+			})
+		// }
 	}
-	
 })
 client.on("clearchat", function (channel) {
     
