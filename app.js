@@ -26,28 +26,29 @@ client.connect();
 
 client.on("chat", (channel, user, message, self) => {
 	if(message.startsWith("!raffle")){
-		var array = message.split(',');
-		var itemNumber= parseInt(array[1]);
-		var delay = parseInt(array[2]);
-		console.log(message);
-		stinv('xSerendipity').then((data)=>{
-			console.log(data[itemNumber].name);
-			client.say("#xSerendipity", data[itemNumber].name);
-			axios({
-				method: 'get',
-				url: 'https://localhost:8080/post-roll?' + 'itemName=' + data[itemNumber].name + '&itemImage=' +data[itemNumber].image 
-					+ '&streamerId=majiaan&delay=' + delay
-			}).then(function (response) {
-				console.log(response);
-			}).catch(function (error){
-				console.log(error);
-			});
+		// if(user.mod){
+			var array = message.split(',');
+			var itemNumber= parseInt(array[1]);
+			var delay = parseInt(array[2]);
+			console.log(message);
+			stinv('xSerendipity').then((data)=>{
+				console.log(data[itemNumber].name);
+				client.say("#xSerendipity", data[itemNumber].name);
+				axios({
+					method: 'get',
+					url: 'https://localhost:8080/post-roll?' + 'itemName=' + data[itemNumber].name + '&itemImage=' +data[itemNumber].image 
+						+ '&streamerId=majiaan&delay=' + delay
+				}).then(function (response) {
+					console.log(response);
+				}).catch(function (error){
+					console.log(error);
+				});
 
-		}).catch(function(error) {
-			console.log(error)
-		})
+			}).catch(function(error) {
+				console.log(error)
+			})
+		// }
 	}
-	
 })
 client.on("clearchat", function (channel) {
     
